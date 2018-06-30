@@ -8,7 +8,7 @@ import reducer from './reducer';
 import TaskList from './TaskList';
 
 const client = axios.create({
-  baseURL: 'https://api.github.com',
+  baseURL: 'http://192.168.1.162:8080',
   responseType: 'json',
 });
 

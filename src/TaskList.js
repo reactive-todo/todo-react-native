@@ -4,26 +4,28 @@ import { ScrollView, Text } from 'react-native';
 import { CheckBox, Header } from 'react-native-elements';
 import { connect } from 'react-redux';
 
-import { getTasks } from './reducer';
+import { getTasks, checkTask, uncheckTask } from './reducer';
 
 class TaskList extends React.Component {
   static propTypes = {
     tasks: PropTypes.arrayOf(PropTypes.object).isRequired,
     getTasks: PropTypes.func.isRequired,
+    checkTask: PropTypes.func.isRequired,
+    uncheckTask: PropTypes.func.isRequired,
   };
 
   componentDidMount() {
     this.props.getTasks();
   }
 
-  // toggleTask = (task) => {
-  // const toggledTask = task;
-  // toggledTask.checked = !toggledTask.checked;
-  //
-  // this.setState({
-  //   tasks: this.state.tasks.map(o => (o === task ? toggledTask : o)),
-  // });
-  // };
+  toggleTask = async (task) => {
+    if (task.checked) {
+      await this.props.uncheckTask(task);
+    } else {
+      await this.props.checkTask(task);
+    }
+    this.props.getTasks();
+  };
 
   render() {
     return (
@@ -35,8 +37,9 @@ class TaskList extends React.Component {
           {this.props.tasks.length > 0 ? this.props.tasks.map(task => (
             <CheckBox
               key={task.id}
-              title={task.name}
+              title={task.description}
               checked={task.checked}
+              onPress={() => this.toggleTask(task)}
             />
           )) : (
             <Text>Empty list</Text>
@@ -48,8 +51,9 @@ class TaskList extends React.Component {
 }
 
 export default connect(state => ({
-  state,
   tasks: state.tasks,
 }), {
   getTasks,
+  checkTask,
+  uncheckTask,
 })(TaskList);
